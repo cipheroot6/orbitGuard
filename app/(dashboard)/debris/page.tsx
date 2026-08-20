@@ -18,7 +18,7 @@ export default async function DebrisCatalogPage() {
     .limit(100)
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-8 text-white">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8 text-white">
       <PageHeader 
         title="Debris Catalog" 
         description="Listing of all tracked objects (Top 100 shown for performance)." 

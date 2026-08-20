@@ -25,7 +25,7 @@ export default async function DashboardOverview() {
     .limit(1)
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-8 text-white">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8 text-white">
       <PageHeader 
         title="OrbitGuard Dashboard" 
         description="Live overview of the orbital environment and active risks." 

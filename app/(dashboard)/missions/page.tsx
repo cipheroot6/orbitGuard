@@ -26,7 +26,7 @@ export default function MissionsPage() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-8 text-white">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8 text-white">
       <PageHeader 
         title="Mission Simulator" 
         description="Plan Active Debris Removal (ADR) missions using generative AI." 

@@ -107,7 +107,7 @@ export default function RiskAnalysisPage() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-8 text-white">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8 text-white">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <PageHeader 
           title="Risk Analysis" 
