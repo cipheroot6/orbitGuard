@@ -1,0 +1,647 @@
+{
+  "id": "2217342f-7c83-45d7-9710-105ccc8fa58a",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.conjunction_events": {
+      "name": "conjunction_events",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "object1_id": {
+          "name": "object1_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "object2_id": {
+          "name": "object2_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time_of_closest_approach": {
+          "name": "time_of_closest_approach",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "miss_distance_km": {
+          "name": "miss_distance_km",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "relative_speed_kms": {
+          "name": "relative_speed_kms",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "collision_probability": {
+          "name": "collision_probability",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "severity": {
+          "name": "severity",
+          "type": "severity",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_resolved": {
+          "name": "is_resolved",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "resolved_at": {
+          "name": "resolved_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "conjunction_tca_idx": {
+          "name": "conjunction_tca_idx",
+          "columns": [
+            {
+              "expression": "time_of_closest_approach",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "conjunction_severity_idx": {
+          "name": "conjunction_severity_idx",
+          "columns": [
+            {
+              "expression": "severity",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "conjunction_events_object1_id_debris_objects_id_fk": {
+          "name": "conjunction_events_object1_id_debris_objects_id_fk",
+          "tableFrom": "conjunction_events",
+          "tableTo": "debris_objects",
+          "columnsFrom": [
+            "object1_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "conjunction_events_object2_id_debris_objects_id_fk": {
+          "name": "conjunction_events_object2_id_debris_objects_id_fk",
+          "tableFrom": "conjunction_events",
+          "tableTo": "debris_objects",
+          "columnsFrom": [
+            "object2_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.debris_objects": {
+      "name": "debris_objects",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "norad_id": {
+          "name": "norad_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "international_designator": {
+          "name": "international_designator",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tle_line1": {
+          "name": "tle_line1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tle_line2": {
+          "name": "tle_line2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "object_type": {
+          "name": "object_type",
+          "type": "object_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'UNKNOWN'"
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "launch_date": {
+          "name": "launch_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "decay_date": {
+          "name": "decay_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "period_minutes": {
+          "name": "period_minutes",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "inclination_deg": {
+          "name": "inclination_deg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "apogee_km": {
+          "name": "apogee_km",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "perigee_km": {
+          "name": "perigee_km",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rcs_size": {
+          "name": "rcs_size",
+          "type": "rcs_size",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_updated": {
+          "name": "last_updated",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "debris_norad_idx": {
+          "name": "debris_norad_idx",
+          "columns": [
+            {
+              "expression": "norad_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "debris_type_idx": {
+          "name": "debris_type_idx",
+          "columns": [
+            {
+              "expression": "object_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "debris_objects_norad_id_unique": {
+          "name": "debris_objects_norad_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "norad_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.mission_simulations": {
+      "name": "mission_simulations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_norad_ids": {
+          "name": "target_norad_ids",
+          "type": "integer[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mission_type": {
+          "name": "mission_type",
+          "type": "mission_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "estimated_delta_v_ms": {
+          "name": "estimated_delta_v_ms",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "estimated_duration_days": {
+          "name": "estimated_duration_days",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "estimated_risk_reduction_pct": {
+          "name": "estimated_risk_reduction_pct",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ai_insights": {
+          "name": "ai_insights",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "launch_window_start": {
+          "name": "launch_window_start",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "launch_window_end": {
+          "name": "launch_window_end",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "mission_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'draft'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.risk_assessments": {
+      "name": "risk_assessments",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "debris_id": {
+          "name": "debris_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "risk_score": {
+          "name": "risk_score",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "risk_level": {
+          "name": "risk_level",
+          "type": "risk_level",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "collision_probability": {
+          "name": "collision_probability",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "closest_approach_km": {
+          "name": "closest_approach_km",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "closest_approach_time": {
+          "name": "closest_approach_time",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "relative_velocity_kms": {
+          "name": "relative_velocity_kms",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nearby_object_count": {
+          "name": "nearby_object_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "assessed_at": {
+          "name": "assessed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "risk_debris_idx": {
+          "name": "risk_debris_idx",
+          "columns": [
+            {
+              "expression": "debris_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "risk_level_idx": {
+          "name": "risk_level_idx",
+          "columns": [
+            {
+              "expression": "risk_level",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "risk_assessments_debris_id_debris_objects_id_fk": {
+          "name": "risk_assessments_debris_id_debris_objects_id_fk",
+          "tableFrom": "risk_assessments",
+          "tableTo": "debris_objects",
+          "columnsFrom": [
+            "debris_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.sync_logs": {
+      "name": "sync_logs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "objects_fetched": {
+          "name": "objects_fetched",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "objects_upserted": {
+          "name": "objects_upserted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "duration_ms": {
+          "name": "duration_ms",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "error": {
+          "name": "error",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "synced_at": {
+          "name": "synced_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.mission_status": {
+      "name": "mission_status",
+      "schema": "public",
+      "values": [
+        "draft",
+        "simulated",
+        "planned"
+      ]
+    },
+    "public.mission_type": {
+      "name": "mission_type",
+      "schema": "public",
+      "values": [
+        "CAPTURE",
+        "DEORBIT",
+        "NUDGE"
+      ]
+    },
+    "public.object_type": {
+      "name": "object_type",
+      "schema": "public",
+      "values": [
+        "DEBRIS",
+        "PAYLOAD",
+        "ROCKET BODY",
+        "UNKNOWN"
+      ]
+    },
+    "public.rcs_size": {
+      "name": "rcs_size",
+      "schema": "public",
+      "values": [
+        "SMALL",
+        "MEDIUM",
+        "LARGE"
+      ]
+    },
+    "public.risk_level": {
+      "name": "risk_level",
+      "schema": "public",
+      "values": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "CRITICAL"
+      ]
+    },
+    "public.severity": {
+      "name": "severity",
+      "schema": "public",
+      "values": [
+        "WARNING",
+        "WATCH",
+        "ALERT"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
