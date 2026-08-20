@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 import { NextRequest, NextResponse } from "next/server"
 
 // Vercel Cron calls this on a schedule defined in vercel.json

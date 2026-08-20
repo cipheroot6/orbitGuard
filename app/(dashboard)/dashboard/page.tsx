@@ -1,4 +1,5 @@
 import Link from "next/link"
+export const dynamic = "force-dynamic"
 import { db } from "@/lib/db"
 import { debrisObjects, riskAssessments, conjunctionEvents, syncLogs } from "@/lib/db/schema"
 import { desc, eq, count, sql } from "drizzle-orm"
