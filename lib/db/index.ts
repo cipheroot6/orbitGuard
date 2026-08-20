@@ -18,6 +18,8 @@ export function getDb(): PostgresJsDatabase<typeof schema> {
 
 export const db = new Proxy({} as PostgresJsDatabase<typeof schema>, {
   get(_, prop) {
-    return (getDb() as any)[prop]
+    const target = getDb()
+    const val = (target as any)[prop]
+    return typeof val === "function" ? val.bind(target) : val
   },
 })

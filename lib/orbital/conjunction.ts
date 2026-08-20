@@ -36,7 +36,9 @@ export async function screenConjunctions(
   const now = Date.now()
   const stepMs = 60 * 1000 // 1 minute steps
   const steps = (lookaheadHours * 60)
-  const events: ConjunctionData[] = []
+  
+  // Track the absolute closest approach for each pair of objects
+  const pairEvents = new Map<string, ConjunctionData>()
 
   // Pre-parse all TLEs
   const satrecs = objects.map((obj) => ({
@@ -58,26 +60,38 @@ export async function screenConjunctions(
     const ids = Array.from(positions.keys())
     for (let i = 0; i < ids.length; i++) {
       for (let j = i + 1; j < ids.length; j++) {
-        const posA = positions.get(ids[i])!
-        const posB = positions.get(ids[j])!
+        const id1 = ids[i]
+        const id2 = ids[j]
+        const posA = positions.get(id1)!
+        const posB = positions.get(id2)!
         const dist = distanceKm(posA, posB)
 
         if (dist < thresholdKm) {
-          events.push({
-            object1NoradId: ids[i],
-            object2NoradId: ids[j],
-            timeOfClosestApproach: date,
-            missDistanceKm: dist,
-            relativeSpeedKms: 0, // extend later with velocity subtraction
-            collisionProbability: estimateCollisionProbability(dist),
-            severity: severityFromDistance(dist),
-          })
+          // Normalize pair key so A-B is the same as B-A
+          const minId = id1 < id2 ? id1 : id2
+          const maxId = id1 > id2 ? id1 : id2
+          const pairKey = `${minId}-${maxId}`
+          
+          const existing = pairEvents.get(pairKey)
+          
+          // Only update if this is a closer approach than previously recorded
+          if (!existing || dist < existing.missDistanceKm) {
+            pairEvents.set(pairKey, {
+              object1NoradId: minId,
+              object2NoradId: maxId,
+              timeOfClosestApproach: date,
+              missDistanceKm: dist,
+              relativeSpeedKms: 0, // extend later with velocity subtraction
+              collisionProbability: estimateCollisionProbability(dist),
+              severity: severityFromDistance(dist),
+            })
+          }
         }
       }
     }
   }
 
-  return events
+  return Array.from(pairEvents.values())
 }
 
 // Simplified Pc estimation — for production replace with Foster method
