@@ -1,8 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
+  serverExternalPackages: ["satellite.js"],
+  turbopack: {
+    rules: {
+      "**/satellite.js/dist/wasm/**/*.js": {
+        loaders: ["./lib/loaders/empty-loader.js"],
+        as: "*.js",
+      },
+    },
   },
 };
 

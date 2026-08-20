@@ -1,4 +1,4 @@
-import { parseTLE, propagate } from "./propagator"
+import { parseTLE, propagateSat } from "./propagator"
 import { MISS_DISTANCE_THRESHOLDS, EARTH_RADIUS_KM } from "@/lib/constants"
 import type { ConjunctionData, ConjunctionSeverity } from "@/types"
 
@@ -51,7 +51,7 @@ export async function screenConjunctions(
     const positions = new Map<number, { x: number; y: number; z: number }>()
 
     for (const { noradId, satrec } of satrecs) {
-      const pos = propagate(satrec, date)
+      const pos = propagateSat(satrec, date)
       if (pos) positions.set(noradId, pos)
     }
 

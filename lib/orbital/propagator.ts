@@ -7,26 +7,23 @@ export interface TLEPair {
   line2: string
 }
 
-// Parse a TLE pair into a satellite record (done once per object)
 export function parseTLE(tle: TLEPair) {
   return satellite.twoline2satrec(tle.line1, tle.line2)
 }
 
-// Get the ECI position of an object at a specific time
-export function propagate(
+export function propagateSat(
   satrec: satellite.SatRec,
   date: Date
 ): OrbitalPosition | null {
   const result = satellite.propagate(satrec, date)
 
-  // satellite.js returns false if propagation fails (decayed orbit etc.)
   if (!result || !result.position || typeof result.position === "boolean") return null
 
   const pos = result.position as satellite.EciVec3<number>
 
   return {
     x: pos.x * KM_TO_SCENE,
-    y: pos.z * KM_TO_SCENE, // Three.js Y = ECI Z (up axis swap)
+    y: pos.z * KM_TO_SCENE,
     z: -pos.y * KM_TO_SCENE,
     timestamp: date,
   }
@@ -45,7 +42,7 @@ export function generateOrbitTrace(
 
   for (let i = 0; i < steps; i++) {
     const date = new Date(now.getTime() + i * stepMs)
-    const pos = propagate(satrec, date)
+    const pos = propagateSat(satrec, date)
     if (pos) positions.push(pos)
   }
 
@@ -61,7 +58,7 @@ export function propagateMany(
 
   for (const obj of objects) {
     const satrec = parseTLE({ line1: obj.tleLine1, line2: obj.tleLine2 })
-    const pos = propagate(satrec, now)
+    const pos = propagateSat(satrec, now)
     if (pos) result.set(obj.noradId, pos)
   }
 
